@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="description" content="Dhaka Traffic Awareness Initiative — Reclaiming Dhaka's streets, one conscious decision at a time."/>
+<title>DTAI — Dhaka Traffic Awareness Initiative</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --or:#FF6B00;--am:#FFB300;
+  --deep:#09090E;--mid:#0F0F16;--card:#14141C;--border:#1C1C28;
+  --text:#E2DDD5;--muted:#72728A;--white:#FFFFFF;--red:#FF3D00;
+  --r:4px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--deep);color:var(--text);overflow-x:hidden}
+
+/* LOADER */
+#loader{
+  position:fixed;inset:0;background:var(--deep);z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .7s ease;
+}
+#loader.out{opacity:0;pointer-events:none}
+.ld-title{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,12vw,6rem);
+  letter-spacing:.1em;
+  background:linear-gradient(90deg,var(--or),var(--am));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.ld-sub{
+  font-family:'Syne',sans-serif;font-size:clamp(.58rem,2vw,.74rem);
+  letter-spacing:.35em;text-transform:uppercase;color:var(--muted);margin-top:8px;
+}
+.ld-bar-wrap{width:min(240px,68vw);height:2px;background:#1a1a26;margin-top:28px;border-radius:2px;overflow:hidden}
+.ld-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--or),var(--am));border-radius:2px}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:800;
+  padding:clamp(10px,2vw,18px) clamp(16px,5vw,56px);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:linear-gradient(180deg,rgba(9,9,14,.97),rgba(9,9,14,0));
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.nav-logo{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(1.2rem,3vw,1.6rem);
+  letter-spacing:.14em;color:var(--or);text-decoration:none;flex-shrink:0;
+}
+.nav-links{display:flex;gap:clamp(14px,3vw,34px);list-style:none}
+.nav-links a{
+  font-family:'Syne',sans-serif;font-size:clamp(.58rem,1.5vw,.72rem);font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;
+  transition:color .2s;white-space:nowrap;
+}
+.nav-links a:hover{color:var(--or)}
+@media(max-width:580px){.nav-links{display:none}}
+.nav-cta{
+  font-family:'Syne',sans-serif;font-size:clamp(.58rem,1.5vw,.72rem);font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--deep);background:var(--or);
+  padding:clamp(7px,1.2vw,11px) clamp(12px,2.5vw,22px);border-radius:var(--r);
+  text-decoration:none;flex-shrink:0;transition:background .2s;
+}
+.nav-cta:hover{background:var(--am)}
+
+/* HERO */
+#hero{position:relative;height:100svh;min-height:500px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-content{position:relative;z-index:10;text-align:center;padding:0 clamp(16px,6vw,40px);max-width:900px;width:100%}
+.hero-eye{
+  font-family:'Syne',sans-serif;font-size:clamp(.58rem,1.5vw,.7rem);font-weight:700;
+  letter-spacing:.38em;text-transform:uppercase;color:var(--or);
+  margin-bottom:clamp(10px,2vw,20px);opacity:0;animation:fadeUp .8s 1s forwards;
+}
+.hero-h1{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,13vw,10rem);line-height:.92;
+  letter-spacing:.04em;opacity:0;animation:fadeUp .9s 1.2s forwards;
+}
+.hero-h1 .outline{-webkit-text-stroke:2px var(--or);color:transparent}
+.hero-h1 .solid{color:var(--white)}
+.hero-desc{
+  font-size:clamp(.85rem,2vw,1.05rem);font-weight:300;color:var(--muted);
+  max-width:520px;margin:clamp(14px,2.5vw,26px) auto 0;line-height:1.75;
+  opacity:0;animation:fadeUp .9s 1.5s forwards;
+}
+.hero-btns{
+  margin-top:clamp(22px,4vw,42px);display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+  opacity:0;animation:fadeUp .8s 1.8s forwards;
+}
+.btn-p{
+  font-family:'Syne',sans-serif;font-size:clamp(.65rem,1.5vw,.8rem);font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;background:var(--or);color:var(--deep);
+  padding:clamp(10px,1.5vw,14px) clamp(20px,3vw,32px);border:none;border-radius:var(--r);
+  text-decoration:none;display:inline-block;transition:background .2s,transform .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-p:hover{background:var(--am);transform:translateY(-2px)}
+.btn-g{
+  font-family:'Syne',sans-serif;font-size:clamp(.65rem,1.5vw,.8rem);font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;background:transparent;color:var(--text);
+  padding:clamp(10px,1.5vw,14px) clamp(20px,3vw,32px);border:1px solid var(--border);
+  border-radius:var(--r);text-decoration:none;display:inline-block;
+  transition:border-color .2s,color .2s;-webkit-tap-highlight-color:transparent;
+}
+.btn-g:hover{border-color:var(--or);color:var(--or)}
+.scroll-hint{
+  position:absolute;bottom:clamp(18px,4vw,32px);left:50%;transform:translateX(-50%);z-index:10;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  opacity:0;animation:fadeUp .8s 2.1s forwards;
+}
+.scroll-hint span{font-family:'Syne',sans-serif;font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+.scroll-line{width:1px;height:38px;background:linear-gradient(180deg,var(--or),transparent);animation:spulse 1.8s infinite}
+
+/* TICKER */
+.ticker{background:var(--or);padding:clamp(7px,1.5vw,12px) 0;overflow:hidden;white-space:nowrap}
+.ticker-inner{display:inline-block;animation:tick 28s linear infinite}
+.ticker-inner span{font-family:'Bebas Neue',sans-serif;font-size:clamp(.8rem,2vw,1.1rem);letter-spacing:.15em;color:var(--deep);margin:0 clamp(18px,4vw,40px)}
+.ticker-inner .dot{color:rgba(0,0,0,.28);margin:0 6px}
+
+/* SHARED */
+section{position:relative}
+.sec-wrap{max-width:1200px;margin:0 auto;padding:clamp(56px,10vw,128px) clamp(16px,5vw,56px)}
+.eye{font-family:'Syne',sans-serif;font-size:clamp(.58rem,1.5vw,.7rem);font-weight:700;letter-spacing:.38em;text-transform:uppercase;color:var(--or);margin-bottom:clamp(10px,1.5vw,16px)}
+.sh2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,6vw,5.5rem);line-height:.95;letter-spacing:.03em;color:var(--white)}
+.sh2 em{font-style:normal;color:var(--or)}
+.sp{font-family:'DM Sans',sans-serif;font-size:clamp(.85rem,1.5vw,1rem);font-weight:300;color:var(--muted);line-height:1.8;max-width:520px}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .65s ease,transform .65s ease}
+.rv.on{opacity:1;transform:translateY(0)}
+.rv.d1{transition-delay:.12s}.rv.d2{transition-delay:.24s}.rv.d3{transition-delay:.38s}.rv.d4{transition-delay:.52s}
+
+/* PROBLEM */
+#problem{background:var(--deep)}
+.prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,6vw,72px);align-items:center}
+@media(max-width:760px){.prob-grid{grid-template-columns:1fr}}
+.prob-canvas-wrap{border-radius:var(--r);overflow:hidden;height:clamp(240px,48vw,400px);border:1px solid var(--border);background:var(--card)}
+#road-canvas{width:100%;height:100%;display:block}
+.pstats{display:grid;grid-template-columns:1fr 1fr;gap:clamp(9px,1.5vw,16px);margin-top:clamp(20px,3vw,36px)}
+.pstat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:clamp(14px,2.5vw,24px) clamp(12px,2vw,20px);position:relative;overflow:hidden}
+.pstat::after{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--or)}
+.pstat-n{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.6rem,4vw,2.8rem);line-height:1;color:var(--or)}
+.pstat-l{font-family:'DM Sans',sans-serif;font-size:clamp(.68rem,1.2vw,.8rem);color:var(--muted);margin-top:4px;line-height:1.5}
+
+/* JOURNEY */
+#journey{background:var(--mid)}
+.jhead{text-align:center;margin-bottom:clamp(36px,7vw,70px)}
+.jhead .sp{margin:clamp(10px,2vw,18px) auto 0;text-align:center}
+.tl{position:relative;display:flex;flex-direction:column}
+.tl::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,var(--or) 15%,var(--or) 85%,transparent);transform:translateX(-50%)}
+@media(max-width:660px){.tl::before{left:16px}}
+.tl-item{display:grid;grid-template-columns:1fr 52px 1fr;align-items:center;min-height:130px;padding:14px 0}
+@media(max-width:660px){.tl-item{grid-template-columns:32px 1fr;min-height:auto}.tl-empty{display:none}}
+.tl-dot-col{display:flex;align-items:center;justify-content:center;position:relative;z-index:2}
+.tl-dot{width:15px;height:15px;border-radius:50%;background:var(--or);flex-shrink:0;box-shadow:0 0 0 5px rgba(255,107,0,.14),0 0 18px rgba(255,107,0,.4)}
+.tl-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:clamp(18px,2.5vw,28px) clamp(16px,2.5vw,26px);transition:border-color .3s,transform .3s}
+.tl-card:hover{border-color:var(--or);transform:translateY(-3px)}
+.tl-num{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1;color:rgba(255,107,0,.11);margin-bottom:4px}
+.tl-title{font-family:'Syne',sans-serif;font-size:clamp(.82rem,1.3vw,.98rem);font-weight:700;color:var(--white);margin-bottom:7px}
+.tl-text{font-family:'DM Sans',sans-serif;font-size:clamp(.78rem,1.1vw,.88rem);font-weight:300;color:var(--muted);line-height:1.7}
+
+/* IMPACT */
+#impact{background:var(--deep);text-align:center}
+#impact .sec-wrap{display:flex;flex-direction:column;align-items:center}
+#globe-canvas{display:block;width:min(460px,88vw);height:min(460px,88vw);margin:clamp(28px,5vw,56px) auto}
+.istats{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2vw,22px);width:100%;max-width:860px}
+@media(max-width:480px){.istats{grid-template-columns:1fr}}
+.istat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:clamp(22px,4vw,38px) clamp(12px,2vw,20px);position:relative;overflow:hidden}
+.istat::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--or),transparent)}
+.istat-n{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,7vw,3.8rem);line-height:1;background:linear-gradient(135deg,var(--or),var(--am));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.istat-l{font-family:'Syne',sans-serif;font-size:clamp(.58rem,.9vw,.7rem);font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:9px}
+
+/* CAMPAIGNS */
+#campaigns{background:var(--mid)}
+#campaigns .sec-wrap{padding-right:0}
+.camp-head{margin-bottom:clamp(28px,5vw,52px)}
+.hscroll{
+  display:flex;gap:clamp(12px,2vw,20px);overflow-x:auto;
+  padding-right:clamp(16px,5vw,56px);padding-bottom:14px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;cursor:grab;
+}
+.hscroll:active{cursor:grabbing}
+.hscroll::-webkit-scrollbar{display:none}
+.camp-card{
+  flex:0 0 clamp(248px,72vw,330px);background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:clamp(22px,3vw,34px) clamp(18px,2.5vw,28px);
+  position:relative;overflow:hidden;transition:border-color .3s,transform .3s;
+  -webkit-tap-highlight-color:transparent;
+}
+.camp-card:hover{border-color:var(--or);transform:translateY(-5px)}
+.camp-icon{font-size:clamp(1.8rem,4vw,2.6rem);display:block;margin-bottom:14px}
+.camp-n{position:absolute;top:14px;right:18px;font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,7vw,4.5rem);color:rgba(255,107,0,.05);line-height:1;pointer-events:none}
+.camp-title{font-family:'Syne',sans-serif;font-size:clamp(.88rem,1.4vw,1.02rem);font-weight:700;color:var(--white);margin-bottom:9px}
+.camp-text{font-family:'DM Sans',sans-serif;font-size:clamp(.77rem,1.1vw,.86rem);font-weight:300;color:var(--muted);line-height:1.75}
+.camp-tag{display:inline-block;margin-top:16px;font-family:'Syne',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--or);border:1px solid var(--or);padding:4px 9px;border-radius:2px}
+
+/* FOUNDER */
+#founder{background:var(--deep)}
+.found-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,7vw,76px);align-items:center}
+@media(max-width:760px){.found-grid{grid-template-columns:1fr}}
+.found-visual{position:relative;height:clamp(280px,55vw,440px)}
+#founder-canvas{width:100%;height:100%;display:block;border-radius:var(--r)}
+.found-badge{position:absolute;bottom:clamp(12px,2vw,20px);right:clamp(12px,2vw,20px);background:var(--or);color:var(--deep);font-family:'Syne',sans-serif;font-size:clamp(.58rem,1.2vw,.66rem);font-weight:800;letter-spacing:.2em;text-transform:uppercase;padding:6px 12px;border-radius:2px}
+.found-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.6rem);line-height:1;color:var(--white);margin-top:clamp(18px,3vw,28px)}
+.found-role{font-family:'Syne',sans-serif;font-size:clamp(.58rem,1.2vw,.7rem);font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--or);margin-top:7px;margin-bottom:clamp(16px,2.5vw,24px)}
+.found-quote{font-size:clamp(.88rem,1.4vw,1.04rem);font-style:italic;color:var(--text);line-height:1.75;border-left:3px solid var(--or);padding-left:clamp(12px,2vw,20px);margin-top:clamp(16px,2.5vw,24px)}
+.found-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:clamp(16px,2.5vw,26px)}
+.ftag{font-family:'Syne',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;background:var(--card);border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:2px}
+
+/* SDG */
+#sdg{background:var(--mid);text-align:center}
+#sdg .sec-wrap{display:flex;flex-direction:column;align-items:center}
+.sdg-badge{display:inline-flex;align-items:center;gap:clamp(12px,3vw,22px);background:var(--card);border:1px solid var(--or);border-radius:var(--r);padding:clamp(18px,3vw,30px) clamp(20px,4vw,42px);margin:clamp(24px,4vw,46px) 0;flex-wrap:wrap;justify-content:center}
+.sdg-num{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,10vw,5rem);line-height:1;color:var(--or)}
+.sdg-info{text-align:left}
+.sdg-info h3{font-family:'Syne',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.sdg-info p{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.3rem,3vw,1.8rem);letter-spacing:.05em;color:var(--white);line-height:1.1}
+.sdg-ps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(9px,2vw,18px);width:100%}
+@media(max-width:580px){.sdg-ps{grid-template-columns:1fr}}
+.sdg-p{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:clamp(16px,2.5vw,24px);text-align:left;transition:border-color .3s}
+.sdg-p:hover{border-color:var(--or)}
+.sdg-pi{font-size:clamp(1.2rem,2.5vw,1.5rem);margin-bottom:8px}
+.sdg-pt{font-family:'Syne',sans-serif;font-size:clamp(.78rem,1.2vw,.84rem);font-weight:700;color:var(--white);margin-bottom:5px}
+.sdg-ptx{font-family:'DM Sans',sans-serif;font-size:clamp(.73rem,1vw,.8rem);font-weight:300;color:var(--muted);line-height:1.65}
+
+/* CTA */
+#cta{background:var(--deep);text-align:center;overflow:hidden}
+#cta-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:.35}
+.cta-inner{position:relative;z-index:2}
+.cta-h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.6rem,9vw,7rem);line-height:.95;letter-spacing:.03em;color:var(--white)}
+.cta-h2 span{color:var(--or)}
+.cta-p{font-family:'DM Sans',sans-serif;font-size:clamp(.85rem,1.5vw,1.04rem);font-weight:300;color:var(--muted);max-width:460px;margin:clamp(14px,2.5vw,24px) auto clamp(26px,4vw,44px);line-height:1.8}
+.contact-row{display:flex;align-items:center;justify-content:center;gap:clamp(8px,2vw,14px);margin-top:clamp(18px,3vw,28px);flex-wrap:wrap}
+.contact-link{font-family:'Syne',sans-serif;font-size:clamp(.6rem,1.3vw,.7rem);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);background:var(--card);border:1px solid var(--border);padding:9px 16px;border-radius:var(--r);text-decoration:none;transition:color .2s,border-color .2s}
+.contact-link:hover{color:var(--or);border-color:var(--or)}
+.hash{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.2rem,3vw,1.8rem);letter-spacing:.08em;color:var(--am);margin-top:clamp(22px,4vw,40px);display:block}
+
+/* FOOTER */
+footer{background:var(--mid);border-top:1px solid var(--border);padding:clamp(20px,4vw,36px) clamp(16px,5vw,56px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:clamp(10px,2vw,18px)}
+.foot-logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(1rem,2.5vw,1.3rem);letter-spacing:.1em;color:var(--or)}
+.foot-txt{font-family:'DM Sans',sans-serif;font-size:clamp(.66rem,1.2vw,.78rem);font-weight:300;color:var(--muted)}
+.foot-txt a{color:var(--or);text-decoration:none}
+.foot-tag{font-family:'Syne',sans-serif;font-size:clamp(.56rem,1vw,.62rem);font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+/* KEYFRAMES */
+@keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes spulse{0%,100%{opacity:1;height:38px}50%{opacity:.3;height:24px}}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="ld-title">DTAI</div>
+  <div class="ld-sub">Dhaka Traffic Awareness Initiative</div>
+  <div class="ld-bar-wrap"><div class="ld-bar" id="lbar"></div></div>
+</div>
+
+<nav>
+  <a href="#hero" class="nav-logo">DTAI</a>
+  <ul class="nav-links">
+    <li><a href="#problem">The Crisis</a></li>
+    <li><a href="#journey">Our Plan</a></li>
+    <li><a href="#impact">Impact</a></li>
+    <li><a href="#founder">Founder</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Join Us</a>
+</nav>
+
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-eye">Dhaka Traffic Awareness Initiative</div>
+    <h1 class="hero-h1"><span class="solid">RECLAIM</span><br><span class="outline">OUR CITY</span></h1>
+    <p class="hero-desc">Dhaka loses <strong>3.2 million work hours</strong> every single day to traffic. We're building a movement — one road, one driver, one decision at a time.</p>
+    <div class="hero-btns">
+      <a href="#journey" class="btn-p">See Our Plan</a>
+      <a href="#impact" class="btn-g">View Impact</a>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<div class="ticker">
+  <div class="ticker-inner">
+    <span>Rickshaw Capital of the World</span><span class="dot">●</span>
+    <span>3.2M Work Hours Lost Daily</span><span class="dot">●</span>
+    <span>750 Lives to be Impacted</span><span class="dot">●</span>
+    <span>4 Workshops · 1,000 Safety Guides</span><span class="dot">●</span>
+    <span>#DhakaMoves</span><span class="dot">●</span>
+    <span>SDG 11 — Sustainable Cities</span><span class="dot">●</span>
+    <span>Rickshaw Capital of the World</span><span class="dot">●</span>
+    <span>3.2M Work Hours Lost Daily</span><span class="dot">●</span>
+    <span>750 Lives to be Impacted</span><span class="dot">●</span>
+    <span>4 Workshops · 1,000 Safety Guides</span><span class="dot">●</span>
+    <span>#DhakaMoves</span><span class="dot">●</span>
+    <span>SDG 11 — Sustainable Cities</span><span class="dot">●</span>
+  </div>
+</div>
+
+<section id="problem">
+  <div class="sec-wrap">
+    <div class="prob-grid">
+      <div>
+        <div class="eye rv">The Crisis</div>
+        <h2 class="sh2 rv d1">Dhaka's Traffic<br><em>Costs Lives</em></h2>
+        <p class="sp rv d2" style="margin-top:clamp(12px,2vw,20px)">In Dhaka, traffic isn't just an inconvenience — it steals time from students, delays entrepreneurs, and can mean the difference between life and death for those needing urgent medical care.</p>
+        <div class="pstats">
+          <div class="pstat rv d1"><div class="pstat-n">3.2M</div><div class="pstat-l">Work hours lost daily</div></div>
+          <div class="pstat rv d2"><div class="pstat-n">5km/h</div><div class="pstat-l">Average speed in central Dhaka</div></div>
+          <div class="pstat rv d3"><div class="pstat-n">5000+</div><div class="pstat-l">Rickshaws in Mohakhali alone</div></div>
+          <div class="pstat rv d4"><div class="pstat-n">80%</div><div class="pstat-l">Of accidents from rule violations</div></div>
+        </div>
+      </div>
+      <div class="prob-canvas-wrap rv d2"><canvas id="road-canvas"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<section id="journey">
+  <div class="sec-wrap">
+    <div class="jhead">
+      <div class="eye rv">The Roadmap</div>
+      <h2 class="sh2 rv d1">How We <em>Drive Change</em></h2>
+      <p class="sp rv d2">August to November 2026 — four months, four pillars, one transformed city.</p>
+    </div>
+    <div class="tl">
+      <div class="tl-item rv">
+        <div class="tl-card"><div class="tl-num">01</div><div class="tl-title">Community Workshops at BRAC University</div><div class="tl-text">Four awareness workshops bringing together students, residents, and local authorities to discuss responsible road behaviour and safer mobility. Each session targets 100+ attendees.</div></div>
+        <div class="tl-dot-col"><div class="tl-dot"></div></div>
+        <div class="tl-empty"></div>
+      </div>
+      <div class="tl-item rv d1">
+        <div class="tl-empty"></div>
+        <div class="tl-dot-col"><div class="tl-dot"></div></div>
+        <div class="tl-card"><div class="tl-num">02</div><div class="tl-title">Outreach to Transport Workers</div><div class="tl-text">Distributing 1,000 traffic safety guides and reflective stickers to rickshaw pullers and bus drivers around Mohakhali — supporting those who spend the most time on Dhaka's roads.</div></div>
+      </div>
+      <div class="tl-item rv d2">
+        <div class="tl-card"><div class="tl-num">03</div><div class="tl-title">#DhakaMoves Digital Campaign</div><div class="tl-text">A social media campaign targeting 2,000+ engagements through posts, shares, and discussions that promote safer commuting habits and build a community of conscious road users.</div></div>
+        <div class="tl-dot-col"><div class="tl-dot"></div></div>
+        <div class="tl-empty"></div>
+      </div>
+      <div class="tl-item rv d3">
+        <div class="tl-empty"></div>
+        <div class="tl-dot-col"><div class="tl-dot"></div></div>
+        <div class="tl-card"><div class="tl-num">04</div><div class="tl-title">Impact Measurement & Advocacy</div><div class="tl-text">Pre- and post-workshop surveys to measure awareness improvements. Findings presented to local authorities and BRAC University to advocate for long-term structural change.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="impact">
+  <div class="sec-wrap">
+    <div class="eye rv">Real Numbers</div>
+    <h2 class="sh2 rv d1">Measuring <em>Real Impact</em></h2>
+    <canvas id="globe-canvas"></canvas>
+    <div class="istats">
+      <div class="istat rv"><div class="istat-n" data-target="750">0</div><div class="istat-l">Lives Directly Impacted</div></div>
+      <div class="istat rv d1"><div class="istat-n" data-target="1000">0</div><div class="istat-l">Safety Guides Distributed</div></div>
+      <div class="istat rv d2"><div class="istat-n" data-target="2000">0</div><div class="istat-l">Online Engagements</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="campaigns">
+  <div class="sec-wrap">
+    <div class="camp-head">
+      <div class="eye rv">Our Pillars</div>
+      <h2 class="sh2 rv d1">Three Ways <em>We Act</em></h2>
+    </div>
+  </div>
+  <div class="hscroll" id="hscroll" style="padding-left:clamp(16px,5vw,56px)">
+    <div class="camp-card"><span class="camp-n">01</span><span class="camp-icon">🚌</span><div class="camp-title">Educate</div><div class="camp-text">Workshops at BRAC University equipping students and residents with knowledge about traffic laws, pedestrian rights, and responsible road behaviour.</div><span class="camp-tag">400+ Attendees</span></div>
+    <div class="camp-card"><span class="camp-n">02</span><span class="camp-icon">🛺</span><div class="camp-title">Empower Rickshaw Pullers</div><div class="camp-text">Reaching the informal transport sector with safety guides and reflective gear. These workers are on the road the most and deserve the most support.</div><span class="camp-tag">1,000 Safety Kits</span></div>
+    <div class="camp-card"><span class="camp-n">03</span><span class="camp-icon">📱</span><div class="camp-title">#DhakaMoves Online</div><div class="camp-text">A digital movement to shift cultural attitudes about traffic rules — making safe road behaviour a point of civic pride rather than bureaucratic compliance.</div><span class="camp-tag">2,000+ Engagements</span></div>
+    <div class="camp-card"><span class="camp-n">04</span><span class="camp-icon">📊</span><div class="camp-title">Measure & Advocate</div><div class="camp-text">Using surveys and analytics to build an evidence base — then presenting findings to city authorities to push for lasting policy change in Dhaka.</div><span class="camp-tag">Evidence-Based</span></div>
+    <div class="camp-card"><span class="camp-n">05</span><span class="camp-icon">🌿</span><div class="camp-title">Climate Connection</div><div class="camp-text">Traffic congestion is also an environmental crisis. Idling vehicles pollute Dhaka's air. Better traffic flow means cleaner air — directly advancing SDG 11.</div><span class="camp-tag">SDG 11</span></div>
+  </div>
+</section>
+
+<section id="founder">
+  <div class="sec-wrap">
+    <div class="found-grid">
+      <div class="found-visual rv">
+        <canvas id="founder-canvas"></canvas>
+        <div class="found-badge">BRAC University · Dhaka</div>
+      </div>
+      <div class="rv d2">
+        <div class="eye">The Voice Behind DTAI</div>
+        <div class="found-name">Kazi Tasnia<br><em style="font-style:normal;color:var(--or)">Bissma</em></div>
+        <div class="found-role">Founder · Economics · BRAC University</div>
+        <p class="sp">Born in Khulna, shaped by the contrast between her coastal roots and Dhaka's urban chaos, Tasnia channels her Economics training into actionable social impact — proving that policy theory and grassroots action are not opposites.</p>
+        <blockquote class="found-quote">"Following traffic rules isn't just about avoiding fines — it's about respecting each other's lives and livelihoods."</blockquote>
+        <div class="found-tags">
+          <span class="ftag">BRAC University</span><span class="ftag">Economics</span><span class="ftag">Khulna → Dhaka</span><span class="ftag">Inclusive Leadership</span><span class="ftag">Climate Resilience</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sdg">
+  <div class="sec-wrap">
+    <div class="eye rv">United Nations Alignment</div>
+    <h2 class="sh2 rv d1">Rooted in <em>Global Goals</em></h2>
+    <div class="sdg-badge rv d2">
+      <div class="sdg-num">11</div>
+      <div class="sdg-info"><h3>UN Sustainable Development Goal</h3><p>Sustainable Cities &amp;<br>Communities</p></div>
+    </div>
+    <div class="sdg-ps">
+      <div class="sdg-p rv"><div class="sdg-pi">🌆</div><div class="sdg-pt">Urban Sustainability</div><div class="sdg-ptx">Safer roads make Dhaka more liveable, efficient, and equitable for all 22 million residents.</div></div>
+      <div class="sdg-p rv d1"><div class="sdg-pi">🤝</div><div class="sdg-pt">UNAI Principle 9</div><div class="sdg-ptx">Academic knowledge applied directly to real-world, lasting impact — the university as an agent of change.</div></div>
+      <div class="sdg-p rv d2"><div class="sdg-pi">📍</div><div class="sdg-pt">Proximity to Injustice</div><div class="sdg-ptx">Tasnia commutes by bus and rickshaw daily. This project is led by someone who lives the problem, not just observes it.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="cta">
+  <canvas id="cta-canvas"></canvas>
+  <div class="sec-wrap cta-inner">
+    <div class="eye rv">Join The Movement</div>
+    <h2 class="cta-h2 rv d1">Every Road.<br>Every <span>Decision.</span><br>Every Life.</h2>
+    <p class="cta-p rv d2">Be part of transforming how 22 million people share Dhaka's streets. Together, one conscious choice at a time.</p>
+    <div class="rv d3"><a href="mailto:kazi.tasnia.bissma@g.bracu.ac.bd" class="btn-p">Get Involved</a></div>
+    <div class="contact-row rv d4">
+      <a href="mailto:kazi.tasnia.bissma@g.bracu.ac.bd" class="contact-link">✉ Email</a>
+      <a href="https://www.linkedin.com/in/tasnia-bissma-5b67233b0/" target="_blank" rel="noopener" class="contact-link">in LinkedIn ↗</a>
+    </div>
+    <span class="hash rv d4">#DhakaMoves</span>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-logo">DTAI</div>
+  <div class="foot-txt">© 2026 Dhaka Traffic Awareness Initiative · BRAC University · <a href="mailto:kazi.tasnia.bissma@g.bracu.ac.bd">kazi.tasnia.bissma@g.bracu.ac.bd</a></div>
+  <div class="foot-tag">SDG 11 · UNAI 9 · #DhakaMoves</div>
+</footer>
+
+<script>
+/* ── DETECT MOBILE ── */
+const MOB = window.innerWidth < 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+/* ── LOADER ── always finishes within 1.8s ── */
+(function(){
+  const el=document.getElementById('loader'), bar=document.getElementById('lbar');
+  let p=0;
+  const iv=setInterval(()=>{
+    p+=Math.random()*20+10;
+    if(p>=100){
+      p=100;bar.style.width='100%';clearInterval(iv);
+      setTimeout(()=>{el.classList.add('out');setTimeout(()=>{el.style.display='none'},750)},180);
+    } else bar.style.width=p+'%';
+  },40);
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>{el.style.display='none'},750)},1800);
+})();
+
+/* ── SCROLL REVEAL ── */
+const rvObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')});
+},{threshold:0.1,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.rv').forEach(el=>rvObs.observe(el));
+
+/* ── COUNTER ── */
+const cObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const el=e.target,target=+el.dataset.target;
+    let cur=0;const iv=setInterval(()=>{
+      cur=Math.min(cur+target/55,target);
+      el.textContent=Math.round(cur).toLocaleString()+(target>=1000?'+':'');
+      if(cur>=target)clearInterval(iv);
+    },22);
+    cObs.unobserve(el);
+  });
+},{threshold:0.5});
+document.querySelectorAll('.istat-n[data-target]').forEach(el=>cObs.observe(el));
+
+/* ── HERO CANVAS ── */
+(function(){
+  const cv=document.getElementById('hero-canvas');
+  if(!cv)return;
+  const ctx=cv.getContext('2d');
+  let W=0,H=0;
+  function resize(){W=cv.width=cv.offsetWidth;H=cv.height=cv.offsetHeight}
+  resize();
+  const ro=new ResizeObserver(resize);ro.observe(cv);
+
+  const NC=MOB?28:58,NP=MOB?55:120;
+  const cars=Array.from({length:NC},()=>({
+    lane:Math.floor(Math.random()*5)-2,progress:Math.random(),
+    speed:0.002+Math.random()*.0035,
+    col:['#FF6B00','#FFB300','#ccc','#778','#FF3D00'][Math.floor(Math.random()*5)],
+    w:15+Math.random()*12
+  }));
+  const parts=Array.from({length:NP},()=>({
+    x:Math.random(),y:Math.random(),spd:0.0001+Math.random()*.0004,
+    sz:0.5+Math.random()*1.8,a:0.1+Math.random()*.4,
+    col:Math.random()>.5?'#FF6B00':'#FFB300'
+  }));
+  let mx=0.5,my=0.5;
+  document.addEventListener('mousemove',e=>{mx=e.clientX/innerWidth;my=e.clientY/innerHeight});
+  document.addEventListener('touchmove',e=>{if(e.touches[0]){mx=e.touches[0].clientX/innerWidth;my=e.touches[0].clientY/innerHeight}},{passive:true});
+
+  function getPos(lane,prog){
+    const VX=W/2,VY=H*0.55,t=Math.pow(prog,1.7);
+    return{x:VX+lane*80*(1+t*13),y:VY+t*(H-VY+150),sc:0.08+t*.92};
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const bg=ctx.createRadialGradient(W/2+(mx-.5)*40,H/2+(my-.5)*25,0,W/2,H/2,Math.max(W,H)*.9);
+    bg.addColorStop(0,'#131020');bg.addColorStop(1,'#09090E');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+    const VX=W/2,VY=H*0.55;
+    ctx.strokeStyle='rgba(255,107,0,0.055)';ctx.lineWidth=1;
+    for(let x=-14;x<=14;x++){ctx.beginPath();ctx.moveTo(VX+x*80,VY);ctx.lineTo(VX+x*80*15,H+200);ctx.stroke()}
+    for(let i=0;i<15;i++){const t=i/14,y=VY+Math.pow(t,1.7)*(H-VY+200),sp=80*15*t;ctx.beginPath();ctx.moveTo(VX-sp,y);ctx.lineTo(VX+sp,y);ctx.stroke()}
+    ctx.strokeStyle='rgba(255,179,0,0.09)';ctx.lineWidth=1.5;
+    [-1,0,1].forEach(l=>{ctx.beginPath();ctx.moveTo(VX+l*80,VY);ctx.lineTo(VX+l*80*15,H+200);ctx.stroke()});
+    parts.forEach(p=>{p.y+=p.spd;if(p.y>1)p.y=0;ctx.beginPath();ctx.arc(p.x*W,p.y*H,p.sz,0,Math.PI*2);ctx.fillStyle=p.col;ctx.globalAlpha=p.a;ctx.fill()});
+    ctx.globalAlpha=1;
+    cars.forEach(c=>{
+      c.progress+=c.speed;if(c.progress>1)c.progress=0;
+      const{x,y,sc}=getPos(c.lane,c.progress);
+      const cw=c.w*sc,ch=cw*.45;
+      ctx.save();ctx.translate(x,y);ctx.globalAlpha=0.2+sc*.68;
+      ctx.fillStyle=c.col;ctx.fillRect(-cw/2,-ch/2,cw,ch);
+      ctx.fillStyle='#fff';ctx.globalAlpha=.38*sc;ctx.fillRect(-cw/2-2,-ch/4,2,ch/2);
+      ctx.fillStyle='#FF3D00';ctx.fillRect(cw/2,-ch/4,2,ch/2);
+      ctx.globalAlpha=1;ctx.restore();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── ROAD CANVAS ── */
+(function(){
+  const cv=document.getElementById('road-canvas');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const LANES=6;
+  const vehs=Array.from({length:MOB?22:38},()=>({
+    lane:Math.floor(Math.random()*LANES),y:Math.random()*2,
+    spd:.003+Math.random()*.008,
+    type:Math.random()>.4?'car':'rick',
+    col:Math.random()>.5?'#FF6B00':(Math.random()>.5?'#FFB300':'#666')
+  }));
+  function draw(){
+    const W=cv.width=cv.offsetWidth,H=cv.height=cv.offsetHeight;
+    ctx.fillStyle='#1a1a22';ctx.fillRect(0,0,W,H);
+    const lw=W/LANES;
+    for(let i=1;i<LANES;i++){ctx.setLineDash([14,12]);ctx.strokeStyle='rgba(255,179,0,0.22)';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(i*lw,0);ctx.lineTo(i*lw,H);ctx.stroke()}
+    ctx.setLineDash([]);
+    vehs.forEach(v=>{
+      v.y+=v.spd;if(v.y>2)v.y=0;
+      const dy=(v.y%1)*H,x=v.lane*lw+lw/2;
+      ctx.save();ctx.translate(x,dy);ctx.globalAlpha=.88;
+      if(v.type==='car'){
+        ctx.fillStyle=v.col;ctx.fillRect(-11,-20,22,40);
+        ctx.fillStyle='rgba(255,255,255,.52)';ctx.fillRect(-9,-20,18,7);
+        ctx.fillStyle='#FF3D00';ctx.fillRect(-9,14,18,6);
+      } else {
+        ctx.fillStyle=v.col;ctx.beginPath();ctx.arc(0,0,9,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#111';ctx.fillRect(-6,-16,12,18);
+        ctx.fillStyle='rgba(255,255,255,.48)';ctx.fillRect(-5,-16,10,5);
+      }
+      ctx.globalAlpha=1;ctx.restore();
+    });
+    const g=ctx.createRadialGradient(W*.5,H*.52,0,W*.5,H*.52,65);
+    g.addColorStop(0,'rgba(255,61,0,.2)');g.addColorStop(1,'rgba(255,61,0,0)');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='rgba(255,107,0,.82)';
+    ctx.font=`bold ${Math.max(8,Math.min(10,W*.022))}px sans-serif`;
+    ctx.textAlign='center';ctx.fillText('MOHAKHALI INTERSECTION',W/2,H*.52);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── GLOBE CANVAS ── */
+(function(){
+  const cv=document.getElementById('globe-canvas');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  let angle=0;
+  const N=MOB?160:260;
+  const dots=Array.from({length:N},(_,i)=>{
+    const phi=Math.acos(-1+(2*i)/N),theta=Math.sqrt(N*Math.PI)*phi;
+    return{phi,theta,hot:Math.random()>.88};
+  });
+  function draw(){
+    const W=cv.width=cv.offsetWidth,H=cv.height=cv.offsetHeight;
+    ctx.clearRect(0,0,W,H);
+    const R=Math.min(W,H)*.42,cx=W/2,cy=H/2;
+    angle+=.004;
+    const gw=ctx.createRadialGradient(cx,cy,0,cx,cy,R*1.5);
+    gw.addColorStop(0,'rgba(255,107,0,.07)');gw.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=gw;ctx.fillRect(0,0,W,H);
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle='rgba(255,107,0,.13)';ctx.lineWidth=1;ctx.stroke();
+    ctx.strokeStyle='rgba(255,107,0,.05)';ctx.lineWidth=.8;
+    for(let lat=-60;lat<=60;lat+=30){
+      const cL=Math.cos(lat*Math.PI/180),sL=Math.sin(lat*Math.PI/180),r=R*cL,y=cy+R*sL;
+      if(r>0){ctx.beginPath();ctx.ellipse(cx,y,r,r*.24,0,0,Math.PI*2);ctx.stroke()}
+    }
+    for(let lon=0;lon<360;lon+=30){
+      const a=(lon+angle*180/Math.PI)*Math.PI/180;
+      ctx.beginPath();ctx.ellipse(cx,cy,R*Math.abs(Math.cos(a)),R,0,0,Math.PI*2);ctx.stroke();
+    }
+    dots.forEach(d=>{
+      const a=d.theta+angle,x3=R*Math.sin(d.phi)*Math.cos(a),z3=R*Math.cos(d.phi);
+      const bright=Math.max(0,x3/R),px=cx+x3,py=cy+z3;
+      if(d.hot){ctx.beginPath();ctx.arc(px,py,3.2,0,Math.PI*2);ctx.fillStyle=`rgba(255,107,0,${.32+bright*.65})`;ctx.fill()}
+      else{ctx.beginPath();ctx.arc(px,py,1.1,0,Math.PI*2);ctx.fillStyle=`rgba(114,114,138,${.16+bright*.48})`;ctx.fill()}
+    });
+    const fs=Math.max(11,Math.min(W,H)*.034);
+    ctx.fillStyle='rgba(255,107,0,.9)';ctx.font=`bold ${fs}px 'Bebas Neue',sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('DHAKA',cx,cy-fs*.5);
+    ctx.fillStyle='rgba(255,179,0,.6)';ctx.font=`${fs*.54}px sans-serif`;
+    ctx.fillText('EPICENTER OF CHANGE',cx,cy+fs*.82);ctx.textBaseline='alphabetic';
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── FOUNDER CANVAS ── */
+(function(){
+  const cv=document.getElementById('founder-canvas');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const rings=Array.from({length:7},(_,i)=>({r:22+i*36,phase:Math.random()*Math.PI*2,spd:.003+i*.001}));
+  const nodes=Array.from({length:MOB?26:40},()=>({
+    angle:Math.random()*Math.PI*2,dist:22+Math.random()*175,
+    spd:(Math.random()-.5)*.009,sz:1+Math.random()*2.5,key:Math.random()>.82
+  }));
+  function draw(){
+    const W=cv.width=cv.offsetWidth,H=cv.height=cv.offsetHeight,cx=W/2,cy=H/2;
+    ctx.fillStyle='#14141C';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(255,107,0,.028)';ctx.lineWidth=1;
+    for(let x=0;x<W;x+=34){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+    for(let y=0;y<H;y+=34){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+    rings.forEach(r=>{
+      r.phase+=r.spd;ctx.beginPath();ctx.arc(cx,cy,r.r,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(255,107,0,${.045+Math.sin(r.phase)*.025})`;ctx.lineWidth=1;ctx.stroke();
+    });
+    nodes.forEach(n=>{
+      n.angle+=n.spd;const x=cx+Math.cos(n.angle)*n.dist,y=cy+Math.sin(n.angle)*n.dist;
+      if(n.key){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x,y);ctx.strokeStyle='rgba(255,107,0,.07)';ctx.lineWidth=1;ctx.stroke();ctx.beginPath();ctx.arc(x,y,n.sz+2,0,Math.PI*2);ctx.fillStyle='rgba(255,107,0,.82)';ctx.fill()}
+      else{ctx.beginPath();ctx.arc(x,y,n.sz,0,Math.PI*2);ctx.fillStyle='rgba(114,114,138,.38)';ctx.fill()}
+    });
+    const gw=ctx.createRadialGradient(cx,cy,0,cx,cy,68);
+    gw.addColorStop(0,'rgba(255,107,0,.17)');gw.addColorStop(1,'rgba(255,107,0,0)');
+    ctx.fillStyle=gw;ctx.beginPath();ctx.arc(cx,cy,68,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(255,107,0,.42)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,50,0,Math.PI*2);ctx.stroke();
+    const fs=Math.max(13,Math.min(W,H)*.12);
+    ctx.fillStyle='rgba(255,107,0,.92)';ctx.font=`bold ${fs}px 'Bebas Neue',sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('KTB',cx,cy);ctx.textBaseline='alphabetic';
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── CTA CANVAS ── */
+(function(){
+  const cv=document.getElementById('cta-canvas');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const pts=Array.from({length:MOB?70:160},()=>({
+    x:Math.random(),y:Math.random(),
+    vx:(Math.random()-.5)*.0007,vy:(Math.random()-.5)*.0007,
+    sz:.5+Math.random()*1.8
+  }));
+  function draw(){
+    const W=cv.width=cv.offsetWidth,H=cv.height=cv.offsetHeight;
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>1)p.vx*=-1;if(p.y<0||p.y>1)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x*W,p.y*H,p.sz,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,107,0,.52)';ctx.fill();
+    });
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<Math.min(i+6,pts.length);j++){
+        const dx=(pts[i].x-pts[j].x)*W,dy=(pts[i].y-pts[j].y)*H,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<88){ctx.beginPath();ctx.moveTo(pts[i].x*W,pts[i].y*H);ctx.lineTo(pts[j].x*W,pts[j].y*H);ctx.strokeStyle=`rgba(255,107,0,${.26*(1-d/88)})`;ctx.lineWidth=.6;ctx.stroke()}
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── DRAG SCROLL ── */
+const track=document.getElementById('hscroll');
+let drag=false,sx=0,sl=0;
+track.addEventListener('mousedown',e=>{drag=true;sx=e.pageX-track.offsetLeft;sl=track.scrollLeft});
+window.addEventListener('mouseup',()=>drag=false);
+window.addEventListener('mousemove',e=>{if(!drag)return;e.preventDefault();track.scrollLeft=sl-(e.pageX-track.offsetLeft-sx)});
+</script>
+</body>
+</html>
